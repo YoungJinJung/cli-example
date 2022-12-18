@@ -1,16 +1,17 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-
+var configFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -45,7 +46,18 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
+	cobra.OnInitialize(initConfig)
+
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
+func initConfig() {
+	configFile = ".config.yml"
+	viper.SetConfigType("yaml")
+	viper.SetConfigFile(configFile)
+	viper.AutomaticEnv()
 
+	if err := viper.ReadInConfig(); err == nil {
+		fmt.Println("Using configuration file: ", viper.ConfigFileUsed())
+	}
+}
